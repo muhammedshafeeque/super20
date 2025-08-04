@@ -1,0 +1,339 @@
+@use './main.scss' as *;
+
+.login-container {
+  min-height: 100vh;
+  @include flex-center;
+  @include gradient-bg;
+  position: relative;
+  overflow: hidden;
+
+  // Background shapes
+  &__background {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+
+    &-shape {
+      position: absolute;
+      border-radius: 8px;
+
+      &--1 {
+        top: 80px;
+        left: 80px;
+        width: 128px;
+        height: 128px;
+        background: rgba(147, 51, 234, 0.2);
+        transform: rotate(12deg);
+        animation: float 6s ease-in-out infinite;
+      }
+
+      &--2 {
+        top: 160px;
+        right: 128px;
+        width: 96px;
+        height: 96px;
+        background: rgba(59, 130, 246, 0.2);
+        transform: rotate(-6deg);
+        animation: float 8s ease-in-out infinite reverse;
+      }
+
+      &--3 {
+        bottom: 128px;
+        left: 128px;
+        width: 160px;
+        height: 160px;
+        background: rgba(147, 51, 234, 0.15);
+        border-radius: 50%;
+        animation: pulse 4s ease-in-out infinite;
+      }
+
+      &--4 {
+        bottom: 80px;
+        right: 80px;
+        width: 112px;
+        height: 112px;
+        background: rgba(59, 130, 246, 0.2);
+        transform: rotate(45deg);
+        animation: float 7s ease-in-out infinite;
+      }
+    }
+  }
+
+  // Main card
+  &__card {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 448px;
+    margin: 0 16px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.6s ease-out 0.1s forwards;
+
+    &-content {
+      @include glassmorphism;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      @include transition;
+    }
+  }
+
+  // Logo
+  &__logo {
+    width: 48px;
+    height: 48px;
+    @include button-gradient($primary-purple, $primary-blue);
+    border-radius: 8px;
+    @include flex-center;
+    margin: 0 auto 24px;
+    opacity: 0;
+    animation: scaleIn 0.5s ease-out 0.2s forwards;
+
+    &-text {
+      color: $white;
+      font-weight: bold;
+      font-size: 18px;
+    }
+  }
+
+  // Title section
+  &__title {
+    font-size: 30px;
+    font-weight: bold;
+    color: $white;
+    text-align: center;
+    margin-bottom: 8px;
+    opacity: 0;
+    animation: fadeInUp 0.5s ease-out 0.3s forwards;
+  }
+
+  &__subtitle {
+    color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeInUp 0.5s ease-out 0.4s forwards;
+  }
+
+  // Form
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  // Input groups
+  &__input-group {
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+
+    &--1 {
+      animation: fadeInLeft 0.5s ease-out 0.5s forwards;
+    }
+
+    &--2 {
+      animation: fadeInLeft 0.5s ease-out 0.6s forwards;
+    }
+  }
+
+  &__label {
+    color: $white;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  &__input-container {
+    position: relative;
+  }
+
+  &__input {
+    width: 100%;
+    padding: 12px 16px 12px 40px;
+    background: rgba(243, 244, 246, 0.2);
+    border: 1px solid rgba(209, 213, 219, 0.3);
+    border-radius: 8px;
+    color: $white;
+    font-size: 16px;
+    outline: none;
+    @include transition;
+
+    &::placeholder {
+      color: rgba(156, 163, 175, 0.7);
+      @include transition(color);
+    }
+
+    &:focus {
+      background: rgba(243, 244, 246, 0.3);
+      border-color: rgba($primary-purple, 0.5);
+      @include focus-ring;
+
+      &::placeholder {
+        color: rgba(156, 163, 175, 0.5);
+      }
+    }
+
+    &--error {
+      border-color: rgba(239, 68, 68, 0.6);
+      background: rgba(239, 68, 68, 0.1);
+
+      &:focus {
+        border-color: rgba(239, 68, 68, 0.8);
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+      }
+    }
+  }
+
+  &__input-icon {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: $gray-400;
+    @include transition(color);
+
+    .login-container__input:focus + & {
+      color: $primary-purple;
+    }
+  }
+
+  &__password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: $gray-400;
+    @include transition;
+
+    &:hover {
+      color: $gray-300;
+    }
+  }
+
+  &__error-message {
+    color: #ef4444;
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  // Options row
+  &__options-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    opacity: 0;
+    animation: fadeInUp 0.5s ease-out 0.7s forwards;
+  }
+
+  &__checkbox-container {
+    display: flex;
+    align-items: center;
+  }
+
+  &__checkbox {
+    margin-right: 8px;
+    cursor: pointer;
+    @include transition;
+  }
+
+  &__checkbox-label {
+    color: $white;
+    font-size: 14px;
+    cursor: pointer;
+    @include transition(color);
+
+    &:hover {
+      color: $primary-purple;
+    }
+  }
+
+  &__forgot-password {
+    color: $white;
+    font-size: 14px;
+    text-decoration: none;
+    @include transition;
+
+    &:hover {
+      color: $primary-purple;
+    }
+  }
+
+  // Sign in button
+  &__signin-button {
+    width: 100%;
+    @include button-gradient;
+    color: $white;
+    font-weight: bold;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    @include transition;
+    opacity: 0;
+    animation: fadeInUp 0.5s ease-out 0.8s forwards, buttonPulse 2s ease-in-out infinite 1s;
+
+    &:hover {
+      background: linear-gradient(to right, #7c3aed, #0891b2);
+      transform: scale(1.02);
+      box-shadow: 0 10px 25px rgba($primary-purple, 0.3);
+    }
+
+    &:focus {
+      @include focus-ring;
+    }
+  }
+
+  // Sign up section
+  &__signup-container {
+    margin-top: 24px;
+    text-align: center;
+    opacity: 0;
+    animation: fadeInUp 0.5s ease-out 0.9s forwards;
+  }
+
+  &__signup-text {
+    color: $white;
+  }
+
+  &__signup-link {
+    color: $white;
+    font-weight: 600;
+    text-decoration: none;
+    @include transition;
+
+    &:hover {
+      color: $primary-purple;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 480px) {
+  .login-container {
+    &__card {
+      margin: 0 16px;
+    }
+
+    &__card-content {
+      padding: 24px;
+    }
+
+    &__title {
+      font-size: 24px;
+    }
+
+    &__background-shape {
+      &--1, &--2, &--3, &--4 {
+        display: none;
+      }
+    }
+  }
+} 
