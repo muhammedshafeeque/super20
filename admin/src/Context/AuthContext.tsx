@@ -8,12 +8,15 @@ interface AuthContextType {
   user: any | null
   login: (user: any) => void
   logout: () => void
+  title: string
+  setTitle: (title: string) => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<any | null>(null)
+  const [title, setTitle] = useState('Dashboard')
   const navigate = useNavigate()
   
   const login = (user: any) => {
@@ -51,7 +54,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, title, setTitle }}>
       {children}
     </AuthContext.Provider>
   )

@@ -6,6 +6,7 @@ import {
 } from "../Utils/AuthUtils.js";
 import { Profile } from "../Models/UserSchema.js";
 import { queryGen } from "../Utils/utils.js";
+import { PERMISSIONS } from "../Constants/permissions.js";
 export const register = async (req, res, next) => {
   try {
     const {
@@ -91,7 +92,7 @@ export const getUserRoles = async (req, res, next) => {
     let query = req.query;
     let keywords = await queryGen(query);
     const userRoles = await UserRole.find(keywords).limit(query.limit?query.limit:10).skip(query.skip?query.skip:0);
-    res.status(200).json({ userRoles });
+    res.status(200).json({results: userRoles });
   } catch (error) {
     next(error);
   }
@@ -175,6 +176,15 @@ export const updateUserDetails = async (req, res, next) => {
         res.status(200).json({ profile ,message:"User details updated successfully"});
       }
 
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getPermissions = async (req, res, next) => {
+  try {
+ 
+    res.status(200).json( PERMISSIONS );
   } catch (error) {
     next(error);
   }

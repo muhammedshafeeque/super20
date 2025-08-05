@@ -1,11 +1,14 @@
 import { FiSearch, FiBell } from 'react-icons/fi';
 import './Header.scss';
+import { useAuth } from '../../Context/AuthContext';
 
 const Header = () => {
+  const { title } = useAuth();
+
   return (
     <header className="header">
       <div className="header__left">
-        <h1 className="header__title">Dashboard</h1>
+        <h1 className="header__title">{title}</h1>
         <p className="header__subtitle">Welcome back, Admin</p>
       </div>
       

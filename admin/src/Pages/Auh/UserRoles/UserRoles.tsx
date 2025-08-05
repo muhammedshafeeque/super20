@@ -1,90 +1,178 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Search, Plus, Eye, Edit, Trash2 } from 'lucide-react';
+import CreateUserModel from './CreateUserModel';
 import './UserRoles.scss';
+import { getUserRoles, deleteUserRole } from '../../../Connection/Auth';
+import { useAuth } from '../../../Context/AuthContext';
 
 interface Role {
-  id: string;
+  _id: string;
   name: string;
-  description: string;
-  code: string;
-  permissionsCount: number;
-  createdDate: string;
+  description?: string;
+  code?: string;
+  permissions: string[];
+  __v: number;
 }
 
 const UserRoles = () => {
+  const { setTitle } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
-  const [roles] = useState<Role[]>([
-    {
-      id: '1',
-      name: 'Super Admin',
-      description: 'Full system access with all permissions',
-      code: 'SUPER_ADMIN',
-      permissionsCount: 25,
-      createdDate: '2024-01-15'
-    },
-    {
-      id: '2',
-      name: 'Admin',
-      description: 'Administrative access with user and course management',
-      code: 'ADMIN',
-      permissionsCount: 18,
-      createdDate: '2024-01-20'
-    },
-    {
-      id: '3',
-      name: 'Instructor',
-      description: 'Teaching staff with course and student management',
-      code: 'INSTRUCTOR',
-      permissionsCount: 12,
-      createdDate: '2024-02-01'
-    },
-    {
-      id: '4',
-      name: 'Student',
-      description: 'Basic student access for learning activities',
-      code: 'STUDENT',
-      permissionsCount: 5,
-      createdDate: '2024-02-10'
-    }
-  ]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('create');
+  const [selectedRole, setSelectedRole] = useState<Role | undefined>(undefined);
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [roleToDelete, setRoleToDelete] = useState<Role | undefined>(undefined);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const filteredRoles = roles.filter(role =>
+  // Set header title when component mounts
+  useEffect(() => {
+    setTitle('User Roles');
+  }, [setTitle]);
+
+  const filteredRoles = (roles || []).filter(role =>
     role.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    role.code.toLowerCase().includes(searchTerm.toLowerCase())
+    (role.code && role.code.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   const handleAddRole = () => {
-    console.log('Add role clicked');
-    // TODO: Implement add role functionality
+    setModalMode('create');
+    setSelectedRole(undefined);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedRole(undefined);
+  };
+
+  const handleCreateRole = (roleData: {
+    name: string;
+    code: string;
+    description: string;
+    permissions: string[];
+  }) => {
+    const newRole: Role = {
+      _id: (roles.length + 1).toString(),
+      name: roleData.name,
+      description: roleData.description,
+      code: roleData.code,
+      permissions: roleData.permissions,
+      __v: 0
+    };
+
+    setRoles(prevRoles => [...prevRoles, newRole]);
+  };
+
+  const handleUpdateRole = (roleData: {
+    name: string;
+    code: string;
+    description: string;
+    permissions: string[];
+  }) => {
+    if (selectedRole) {
+      const updatedRole: Role = {
+        ...selectedRole,
+        name: roleData.name,
+        description: roleData.description,
+        code: roleData.code,
+        permissions: roleData.permissions
+      };
+
+      setRoles(prevRoles => 
+        prevRoles.map(role => 
+          role._id === selectedRole._id ? updatedRole : role
+        )
+      );
+    }
   };
 
   const handleViewRole = (roleId: string) => {
-    console.log('View role:', roleId);
-    // TODO: Implement view role functionality
+    const role = roles.find(r => r._id === roleId);
+    if (role) {
+      setSelectedRole(role);
+      setModalMode('view');
+      setIsModalOpen(true);
+    }
   };
 
   const handleEditRole = (roleId: string) => {
-    console.log('Edit role:', roleId);
-    // TODO: Implement edit role functionality
+    const role = roles.find(r => r._id === roleId);
+    if (role) {
+      setSelectedRole(role);
+      setModalMode('edit');
+      setIsModalOpen(true);
+    }
   };
 
   const handleDeleteRole = (roleId: string) => {
-    console.log('Delete role:', roleId);
-    // TODO: Implement delete role functionality
+    const role = roles.find(r => r._id === roleId);
+    if (role) {
+      setRoleToDelete(role);
+      setIsDeleteModalOpen(true);
+    }
   };
 
+  const confirmDelete = async () => {
+    if (!roleToDelete) return;
+    
+    try {
+      setIsDeleting(true);
+      await deleteUserRole(roleToDelete._id);
+      setRoles(prevRoles => prevRoles.filter(role => role._id !== roleToDelete._id));
+      setIsDeleteModalOpen(false);
+      setRoleToDelete(undefined);
+    } catch (error) {
+      console.error('Error deleting role:', error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const cancelDelete = () => {
+    setIsDeleteModalOpen(false);
+    setRoleToDelete(undefined);
+  };
+
+  const handleModalSubmit = (roleData: {
+    name: string;
+    code: string;
+    description: string;
+    permissions: string[];
+  }) => {
+    if (modalMode === 'create') {
+      handleCreateRole(roleData);
+    } else if (modalMode === 'edit') {
+      handleUpdateRole(roleData);
+    }
+  };
+
+  useEffect(() => {
+    getUserRoles()
+      .then((data) => {
+        if (data && data.results && Array.isArray(data.results)) {
+          setRoles(data.results);
+        } else if (Array.isArray(data)) {
+          setRoles(data);
+        } else {
+          setRoles([]);
+        }
+      })
+      .catch(() => {
+        setRoles([]);
+      });
+  }, []);
+
   return (
-    <div className="user-roles" >
-      <div className="user-roles__container" >
-        {/* Header Section */}
-        <div className="user-roles__header">
-          <div className="user-roles__header-content">
-            <div className="user-roles__title-section">
-              <h1 className="user-roles__title">Roles Management</h1>
-              <p className="user-roles__subtitle">Manage user roles and their permissions</p>
+    <div className="page-container">
+      <div className="content-card">
+        <div className="section-header">
+          <div className="section-header__content">
+            <div className="section-header__title-section">
+              <p className="section-header__subtitle">Manage user roles and their permissions</p>
             </div>
             <button 
-              className="user-roles__add-button"
+              className="btn btn--primary"
               onClick={handleAddRole}
             >
               <Plus size={16} />
@@ -93,69 +181,71 @@ const UserRoles = () => {
           </div>
         </div>
 
-        {/* Search Section */}
-        <div className="user-roles__search">
-          <div className="user-roles__search-container">
-            <Search className="user-roles__search-icon" size={20} />
+        <div className="search-section">
+          <div className="search-container">
+            <Search className="search-icon" size={20} />
             <input
               type="text"
               placeholder="Search roles by name or code..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="user-roles__search-input"
+              className="search-input"
             />
           </div>
         </div>
 
-        {/* Table Section */}
-        <div className="user-roles__table-container">
-          <table className="user-roles__table">
-            <thead className="user-roles__table-header">
+        <div className="table-container">
+          <table className="table">
+            <thead className="table__header">
               <tr>
                 <th>ROLE NAME</th>
                 <th>CODE</th>
                 <th>PERMISSIONS COUNT</th>
-                <th>CREATED DATE</th>
+                <th>DESCRIPTION</th>
                 <th>ACTIONS</th>
               </tr>
             </thead>
-            <tbody className="user-roles__table-body">
+            <tbody className="table__body">
               {filteredRoles.map((role) => (
-                <tr key={role.id} className="user-roles__table-row">
-                  <td className="user-roles__role-name">
-                    <div className="user-roles__role-info">
-                      <span className="user-roles__role-title">{role.name}</span>
-                      <span className="user-roles__role-description">{role.description}</span>
+                <tr key={role._id} className="table__row">
+                  <td>
+                    <div className="data-info">
+                      <span className="data-info__title">{role.name}</span>
+                      <span className="data-info__description">Role ID: {role._id}</span>
                     </div>
                   </td>
-                  <td className="user-roles__role-code">
-                    <span className="user-roles__code-tag">{role.code}</span>
+                  <td>
+                    {role.code ? (
+                      <span className="tag tag--primary">{role.code}</span>
+                    ) : (
+                      <span className="text-secondary">No code</span>
+                    )}
                   </td>
-                  <td className="user-roles__permissions-count">
-                    {role.permissionsCount} permissions
+                  <td className="text-secondary font-medium">
+                    {role.permissions.length} permissions
                   </td>
-                  <td className="user-roles__created-date">
-                    {role.createdDate}
+                  <td className="text-secondary font-medium">
+                    {role.description || 'No description'}
                   </td>
-                  <td className="user-roles__actions">
-                    <div className="user-roles__action-buttons">
+                  <td>
+                    <div className="action-group">
                       <button
-                        className="user-roles__action-btn user-roles__action-btn--view"
-                        onClick={() => handleViewRole(role.id)}
+                        className="btn btn--icon btn--icon--view"
+                        onClick={() => handleViewRole(role._id)}
                         title="View role"
                       >
                         <Eye size={16} />
                       </button>
                       <button
-                        className="user-roles__action-btn user-roles__action-btn--edit"
-                        onClick={() => handleEditRole(role.id)}
+                        className="btn btn--icon btn--icon--edit"
+                        onClick={() => handleEditRole(role._id)}
                         title="Edit role"
                       >
                         <Edit size={16} />
                       </button>
                       <button
-                        className="user-roles__action-btn user-roles__action-btn--delete"
-                        onClick={() => handleDeleteRole(role.id)}
+                        className="btn btn--icon btn--icon--delete"
+                        onClick={() => handleDeleteRole(role._id)}
                         title="Delete role"
                       >
                         <Trash2 size={16} />
@@ -168,6 +258,77 @@ const UserRoles = () => {
           </table>
         </div>
       </div>
+
+      <CreateUserModel
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        mode={modalMode}
+        roleData={selectedRole}
+        onSubmit={handleModalSubmit}
+      />
+
+      {/* Delete Confirmation Modal */}
+      {isDeleteModalOpen && (
+        <div className="modal-overlay">
+          <div className="delete-modal-container">
+            <div className="delete-modal-header">
+              <h2 className="delete-modal-title">Delete Role</h2>
+            </div>
+            <div className="delete-modal-content">
+              <div className="delete-warning">
+                <Trash2 size={48} className="delete-icon" />
+                <h3>Are you sure you want to delete this role?</h3>
+                <p>
+                  You are about to delete the role <strong>"{roleToDelete?.name}"</strong>. 
+                  This action cannot be undone and will permanently remove the role and all its associated permissions.
+                </p>
+                <div className="role-details">
+                  <div className="role-detail">
+                    <span className="detail-label">Role Name:</span>
+                    <span className="detail-value">{roleToDelete?.name}</span>
+                  </div>
+                  <div className="role-detail">
+                    <span className="detail-label">Role Code:</span>
+                    <span className="detail-value">{roleToDelete?.code || 'No code'}</span>
+                  </div>
+                  <div className="role-detail">
+                    <span className="detail-label">Permissions:</span>
+                    <span className="detail-value">{roleToDelete?.permissions.length} permissions</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="delete-modal-actions">
+              <button 
+                type="button" 
+                className="btn btn--secondary" 
+                onClick={cancelDelete}
+                disabled={isDeleting}
+              >
+                Cancel
+              </button>
+              <button 
+                type="button" 
+                className="btn btn--danger" 
+                onClick={confirmDelete}
+                disabled={isDeleting}
+              >
+                {isDeleting ? (
+                  <>
+                    <div className="loading-spinner-small"></div>
+                    <span>Deleting...</span>
+                  </>
+                ) : (
+                  <>
+                    <Trash2 size={16} />
+                    <span>Delete Role</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

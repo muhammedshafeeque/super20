@@ -1,0 +1,397 @@
+// Common reusable styles for the admin panel
+
+// Color variables
+$primary-purple: #8b5cf6;
+$primary-blue: #3b82f6;
+$primary-green: #10b981;
+$primary-red: #ef4444;
+$primary-cyan: #06b6d4;
+
+$gray-50: #f8fafc;
+$gray-100: #f1f5f9;
+$gray-200: #e2e8f0;
+$gray-300: #cbd5e1;
+$gray-400: #94a3b8;
+$gray-500: #64748b;
+$gray-600: #475569;
+$gray-700: #334155;
+$gray-800: #1e293b;
+$gray-900: #0f172a;
+
+$white: #ffffff;
+$black: #000000;
+
+// Mixins
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-start {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+@mixin transition($property: all, $duration: 0.2s, $timing: ease) {
+  transition: $property $duration $timing;
+}
+
+@mixin focus-ring($color: $primary-purple) {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba($color, 0.1);
+}
+
+@mixin hover-lift {
+  &:hover {
+    transform: translateY(-1px);
+  }
+}
+
+// Layout classes
+.page-container {
+  min-height: 100vh;
+  background-color: $gray-50;
+  padding: 1rem;
+  width: 100%;
+}
+
+.content-card {
+  width: 100%;
+  background: $white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.section-header {
+  padding: 32px 20px 24px;
+  border-bottom: 1px solid $gray-200;
+  width: 100%;
+
+  &__content {
+    @include flex-between;
+    gap: 24px;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  &__title-section {
+    flex: 1;
+  }
+
+  &__title {
+    font-size: 28px;
+    font-weight: 700;
+    color: $gray-800;
+    margin: 0 0 8px 0;
+    line-height: 1.2;
+  }
+
+  &__subtitle {
+    font-size: 16px;
+    color: $gray-500;
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+// Button classes
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  @include transition;
+  white-space: nowrap;
+
+  &:hover {
+    @include hover-lift;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &--primary {
+    background: $primary-purple;
+    color: $white;
+
+    &:hover {
+      background: #7c3aed;
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+    }
+  }
+
+  &--secondary {
+    background: $gray-100;
+    color: $gray-700;
+
+    &:hover {
+      background: $gray-200;
+    }
+  }
+
+  &--danger {
+    background: $primary-red;
+    color: $white;
+
+    &:hover {
+      background: #dc2626;
+    }
+  }
+
+  &--success {
+    background: $primary-green;
+    color: $white;
+
+    &:hover {
+      background: #059669;
+    }
+  }
+
+  &--info {
+    background: $primary-blue;
+    color: $white;
+
+    &:hover {
+      background: #2563eb;
+    }
+  }
+
+  &--icon {
+    @include flex-center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 6px;
+    background: transparent;
+
+    &:hover {
+      transform: translateY(-1px);
+    }
+
+    &--view {
+      color: $primary-blue;
+
+      &:hover {
+        background: rgba(59, 130, 246, 0.1);
+      }
+    }
+
+    &--edit {
+      color: $primary-green;
+
+      &:hover {
+        background: rgba(16, 185, 129, 0.1);
+      }
+    }
+
+    &--delete {
+      color: $primary-red;
+
+      &:hover {
+        background: rgba(239, 68, 68, 0.1);
+      }
+    }
+  }
+}
+
+// Search classes
+.search-section {
+  padding: 24px 20px;
+  border-bottom: 1px solid $gray-200;
+  width: 100%;
+}
+
+.search-container {
+  position: relative;
+  max-width: 600px;
+  width: 100%;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 16px 12px 48px;
+  border: 1px solid $gray-200;
+  border-radius: 8px;
+  font-size: 14px;
+  background: $gray-50;
+  @include transition;
+
+  &::placeholder {
+    color: $gray-400;
+  }
+
+  &:focus {
+    @include focus-ring($primary-purple);
+    border-color: $primary-purple;
+    background: $white;
+  }
+}
+
+.search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: $gray-400;
+  z-index: 1;
+}
+
+// Table classes
+.table-container {
+  overflow-x: auto;
+  width: 100%;
+  max-width: 100%;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  table-layout: fixed;
+
+  &__header {
+    background: $gray-50;
+    border-bottom: 1px solid $gray-200;
+
+    th {
+      padding: 16px;
+      text-align: left;
+      font-weight: 600;
+      color: $gray-600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid $gray-200;
+    }
+  }
+
+  &__body {
+    tr {
+      border-bottom: 1px solid $gray-100;
+      @include transition(background-color);
+
+      &:hover {
+        background-color: $gray-50;
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+
+  &__row {
+    td {
+      padding: 20px 16px;
+      vertical-align: top;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+  }
+}
+
+// Data display classes
+.data-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  &__title {
+    font-weight: 600;
+    color: $gray-800;
+    font-size: 14px;
+  }
+
+  &__description {
+    color: $gray-500;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+}
+
+.tag {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  &--primary {
+    background: $primary-purple;
+    color: $white;
+  }
+
+  &--secondary {
+    background: $gray-200;
+    color: $gray-700;
+  }
+
+  &--success {
+    background: $primary-green;
+    color: $white;
+  }
+
+  &--danger {
+    background: $primary-red;
+    color: $white;
+  }
+
+  &--info {
+    background: $primary-blue;
+    color: $white;
+  }
+}
+
+.action-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+// Text utility classes
+.text-primary { color: $gray-800; }
+.text-secondary { color: $gray-500; }
+.text-muted { color: $gray-400; }
+.text-success { color: $primary-green; }
+.text-danger { color: $primary-red; }
+.text-info { color: $primary-blue; }
+
+.font-bold { font-weight: 600; }
+.font-medium { font-weight: 500; }
+.font-normal { font-weight: 400; }
+
+// Spacing utility classes
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: 0.25rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-3 { margin-bottom: 0.75rem; }
+.mb-4 { margin-bottom: 1rem; }
+
+.mt-0 { margin-top: 0; }
+.mt-1 { margin-top: 0.25rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-3 { margin-top: 0.75rem; }
+.mt-4 { margin-top: 1rem; }
+
+.p-0 { padding: 0; }
+.p-1 { padding: 0.25rem; }
+.p-2 { padding: 0.5rem; }
+.p-3 { padding: 0.75rem; }
+.p-4 { padding: 1rem; } 

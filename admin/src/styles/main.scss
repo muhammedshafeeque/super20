@@ -1,4 +1,7 @@
-// Variables
+// Import common styles
+@import './common.scss';
+
+// Variables (keeping for backward compatibility)
 $primary-purple: #8b5cf6;
 $primary-blue: #3b82f6;
 $primary-cyan: #06b6d4;

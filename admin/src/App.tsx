@@ -3,11 +3,14 @@ import './App.css'
 
 import { Routes, Route } from 'react-router-dom'
 import { ROUTES } from './Constants/Routes'
-import Login from './Pages/Auh/Login/Login'
-import Home from './Pages/Home/Home'
-import { Layout } from './Components/Layout/Layout'
-import { useAuth } from './Context/AuthContext'
-import UserRoles from './Pages/Auh/UserRoles/UserRoles'
+import { lazy, Suspense } from 'react';
+
+const Login = lazy(() => import('./Pages/Auh/Login/Login'));
+const Home = lazy(() => import('./Pages/Home/Home'));
+
+const UserRoles = lazy(() => import('./Pages/Auh/UserRoles/UserRoles'));
+import { useAuth } from './Context/AuthContext';
+import { Layout } from './Components/Layout/Layout';
 
 function App() {
   const { user } = useAuth();
