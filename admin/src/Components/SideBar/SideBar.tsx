@@ -8,7 +8,8 @@ import {
   FiCalendar, 
   FiSettings,
   FiUser,
-  FiLogOut
+  FiLogOut,
+  FiBookmark
 } from 'react-icons/fi';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './SideBar.scss';
@@ -25,14 +26,13 @@ const SideBar = () => {
     { icon: FiUsers, label: 'Students', path: ROUTES.STUDENTS },
     { icon: FiBookOpen, label: 'Courses', path: ROUTES.COURSES },
     { icon: FiAward, label: 'Instructors', path: ROUTES.INSTRUCTORS },
+    { icon: FiUser, label: 'Employees', path: ROUTES.EMPLOYEES },
     { icon: FiBarChart2, label: 'Analytics', path: ROUTES.ANALYTICS },
     { icon: FiMessageSquare, label: 'Messages', path: ROUTES.MESSAGES },
     { icon: FiCalendar, label: 'Calendar', path: ROUTES.CALENDAR },
     { icon: FiUser, label: 'User Roles', path: ROUTES.USER_ROLES },
+    { icon: FiBookmark, label: 'Qualifications', path: ROUTES.QUALIFICATIONS },
     { icon: FiSettings, label: 'Settings', path: ROUTES.SETTINGS }
-
-
-
   ];
 
   const handleLogout = () => {

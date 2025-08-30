@@ -1,0 +1,270 @@
+// Import common styles using modern @use syntax
+@use '../../styles/common.scss' as *;
+
+.autocomplete-wrapper {
+  position: relative;
+  width: 100%;
+  margin-bottom: 14px; // Match form-group margin
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.autocomplete-label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #374151;
+  font-size: 15px;
+  letter-spacing: 0.025em;
+
+  .required {
+    color: #dc2626;
+    font-weight: 600;
+  }
+}
+
+.autocomplete-input-container {
+  position: relative;
+  width: 100%;
+  flex: 1;
+
+  &--error {
+    .autocomplete-input {
+      border-color: #dc2626;
+      
+      &:focus {
+        border-color: #dc2626;
+        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+      }
+    }
+  }
+}
+
+.autocomplete-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 36px; // Match form-input height
+}
+
+.autocomplete-search-icon {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  z-index: 1;
+  pointer-events: none;
+  width: 16px;
+  height: 16px;
+}
+
+// Match exactly with form-input styles from SearchForm.scss
+.autocomplete-wrapper .autocomplete-input-container .autocomplete-input-wrapper .autocomplete-input {
+  width: 100% !important;
+  height: 36px !important; // Match form-input height exactly
+  padding: 8px 28px 8px 28px !important; // Match form-select padding exactly
+  padding-left: 32px !important; // Add space for search icon
+  border: 1px solid #d1d5db !important;
+  border-radius: 6px !important; // Match form-input border-radius
+  font-size: 13px !important; // Match form-input font-size
+  transition: all 0.2s ease !important; // Match form-input transition
+  background-color: #fff !important; // Match form-input background
+  color: #374151 !important; // Match form-input color
+  box-sizing: border-box !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  
+  &:focus {
+    outline: none !important;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+    background-color: #fff !important;
+  }
+  
+  &:hover {
+    border-color: #9ca3af !important;
+  }
+  
+  &:disabled {
+    background-color: #f9fafb !important;
+    color: #9ca3af !important;
+    cursor: not-allowed !important;
+  }
+  
+  &::placeholder {
+    color: #9ca3af !important;
+    font-size: 13px !important;
+  }
+}
+
+.autocomplete-clear-btn {
+  position: absolute;
+  right: 28px; // Adjusted to match form-select padding-right
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: all 0.15s ease-in-out;
+  z-index: 2;
+  padding: 0;
+
+  &:hover {
+    background-color: #f3f4f6;
+    color: #6b7280;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  }
+}
+
+.autocomplete-dropdown-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.15s ease-in-out;
+  z-index: 2;
+  padding: 0;
+
+  &:hover {
+    background-color: #f3f4f6;
+    color: #6b7280;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &--open {
+    transform: translateY(-50%) rotate(180deg);
+  }
+}
+
+.autocomplete-error {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #dc2626;
+  font-weight: 500;
+}
+
+.autocomplete-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  margin-top: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.autocomplete-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.autocomplete-options {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.autocomplete-option {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #374151;
+  transition: background-color 0.15s ease-in-out;
+  border-bottom: 1px solid #f1f5f9;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background-color: #f8fafc;
+    color: #1e293b;
+  }
+
+  &:focus {
+    outline: none;
+    background-color: #f1f5f9;
+  }
+
+  &:active {
+    background-color: #e2e8f0;
+  }
+}
+
+.autocomplete-no-results {
+  padding: 12px 16px;
+  text-align: center;
+  color: #64748b;
+  font-size: 14px;
+  font-style: italic;
+}
+
+// Loading spinner
+.loading-spinner-small {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #e2e8f0;
+  border-top: 2px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .autocomplete-wrapper .autocomplete-input-container .autocomplete-input-wrapper .autocomplete-input {
+    font-size: 16px !important; // Prevents zoom on iOS
+  }
+  
+  .autocomplete-dropdown {
+    max-height: 150px;
+  }
+} 

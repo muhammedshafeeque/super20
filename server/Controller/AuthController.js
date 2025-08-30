@@ -7,57 +7,7 @@ import {
 import { Profile } from "../Models/UserSchema.js";
 import { queryGen } from "../Utils/utils.js";
 import { PERMISSIONS } from "../Constants/permissions.js";
-export const register = async (req, res, next) => {
-  try {
-    const {
-      name,
-      email,
-      password,
-      age,
-      gender,
-      profilePicture,
-      status,
-      userType,
-      dateOfBirth,
-      dateOfJoining,
-      educationalQualifications,
-    } = req.body;
-    let userExist=await User.findOne({email:email})
-    if(userExist){
-        next({status:400,message:"Email already exist"})
-    }else{
-    const hashedPassword = await hashPassword(password);
-    const user = await User.create({ name, email, password: hashedPassword });
-    let profileData={
-      user:user._id,
-      name,
-      email,
-      password: hashedPassword,
-      age,
-      gender,
-      profilePicture,
-      status,
-      userType,
-      dateOfBirth,
-      dateOfJoining,
-      educationalQualifications,
-    }
-    if(req.body.userRole){
-      profileData.userRole=req.body.userRole
-      let userRole=await UserRole.findById(req.body.userRole)
-      await User.findByIdAndUpdate(user._id,{
-        $set:{
-          permissions:userRole.permissions
-        }
-      })
-    }
-    const profile = await Profile.create(profileData);
-    res.status(201).json({ profile });
-    }
-  } catch (error) {
-    next(error);
-  }
-};
+
 
 export const login = async (req, res, next) => {
   try {
@@ -80,7 +30,7 @@ export const login = async (req, res, next) => {
 
 export const requestUser = async (req, res, next) => {
   try {
-    const profile = req.profile;
+    const profile = await Profile.findOne({user:req.user._id})  
     res.status(200).json({ profile,token:req.token });
   } catch (error) {
     next(error);
@@ -170,6 +120,7 @@ export const updateUserDetails = async (req, res, next) => {
         if(req.body.dateOfBirth) profileData.dateOfBirth=req.body.dateOfBirth
         if(req.body.dateOfJoining) profileData.dateOfJoining=req.body.dateOfJoining
         if(req.body.educationalQualifications) profileData.educationalQualifications=req.body.educationalQualifications
+        
 
         let profile=await Profile.findByIdAndUpdate(req.params.userId,{$set:profileData})
         let user=await User.findByIdAndUpdate(req.params.userId,{$set:userData})
@@ -189,3 +140,4 @@ export const getPermissions = async (req, res, next) => {
     next(error);
   }
 };
+

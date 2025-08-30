@@ -1,10 +1,10 @@
 // Import common styles
-@use '../../../styles/common.scss' as *;
+@use '../../../styles/common.scss';
 
-// UserRoles specific styles using common classes
+// Qualifications specific styles using common classes
 // This file now only contains component-specific overrides and customizations
 
-.user-roles {
+.qualifications {
   // Use common page container
   @extend .page-container;
 
@@ -53,6 +53,14 @@
     @extend .search-input;
   }
 
+  &__search-section {
+    @extend .search-section;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+
   &__table-container {
     @extend .table-container;
   }
@@ -60,12 +68,12 @@
   &__table {
     @extend .table;
 
-    // Column width distribution for roles table
-    th:nth-child(1) { width: 35%; } // ROLE NAME - widest column
-    th:nth-child(2) { width: 15%; } // CODE
-    th:nth-child(3) { width: 20%; } // PERMISSIONS COUNT
-    th:nth-child(4) { width: 15%; } // CREATED DATE
-    th:nth-child(5) { width: 15%; } // ACTIONS
+    // Column width distribution for qualifications table
+    th:nth-child(1) { width: 30%; } // QUALIFICATION - course name
+    th:nth-child(2) { width: 20%; } // TYPE
+    th:nth-child(3) { width: 25%; } // SPECIALIZATION
+    th:nth-child(4) { width: 15%; } // INSTITUTION
+    th:nth-child(5) { width: 10%; } // ACTIONS
   }
 
   &__table-header {
@@ -80,29 +88,24 @@
     @extend .table__row;
   }
 
-  &__role-info {
+  &__qualification-info {
     @extend .data-info;
   }
 
-  &__role-title {
+  &__qualification-title {
     @extend .data-info__title;
   }
 
-  &__role-description {
+  &__qualification-description {
     @extend .data-info__description;
   }
 
-  &__code-tag {
+  &__type-tag {
     @extend .tag;
     @extend .tag--primary;
   }
 
-  &__permissions-count {
-    @extend .text-secondary;
-    @extend .font-medium;
-  }
-
-  &__created-date {
+  &__specialization {
     @extend .text-secondary;
     @extend .font-medium;
   }
@@ -128,6 +131,8 @@
     }
   }
 }
+
+
 
 // Delete Confirmation Modal
 .delete-modal-container {
@@ -184,7 +189,7 @@
   }
 }
 
-.role-details {
+.qualification-details {
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
@@ -192,7 +197,7 @@
   margin-top: 16px;
 }
 
-.role-detail {
+.qualification-detail {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -240,7 +245,6 @@
     border-color: #fca5a5;
     color: #991b1b;
   }
-}
+} 
 
-
-
+// Search form styles are now in SearchForm.scss 

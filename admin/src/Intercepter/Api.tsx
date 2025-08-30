@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { BaseURL } from '../Constants/Constants';
+import { BaseURL, LOCAL_STORAGE_KEY } from '../Constants/Constants';
 // Create instance
 const axiosInstance = axios.create({
   baseURL: BaseURL,   // change to your API base
@@ -12,7 +12,7 @@ const axiosInstance = axios.create({
 // Request Interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('authToken'); // or use cookies, context, etc.
+    const token = localStorage.getItem(LOCAL_STORAGE_KEY.AUTH_TOKEN); // or use cookies, context, etc.
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }

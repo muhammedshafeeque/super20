@@ -4,7 +4,7 @@ import cors from "cors";
 import morgan from "morgan";
 import connectDB from "./Config/Db.js";
 import router from "./Routes/index.js";
-import { errorHandler, notFound, requestLimiter,asyncHandler } from "./Middleware/CommonMiddleware.js";
+import { errorHandler, notFound, requestLimiter } from "./Middleware/CommonMiddleware.js";
 import { ORIGINS } from "./Constants/Constants.js";
 
 dotenv.config();

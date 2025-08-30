@@ -1,24 +1,11 @@
 // Import common styles
-@import './common.scss';
+@use './common.scss' as *;
 
-// Variables (keeping for backward compatibility)
-$primary-purple: #8b5cf6;
-$primary-blue: #3b82f6;
-$primary-cyan: #06b6d4;
+// Additional variables specific to main.scss
 $dark-purple: #4c1d95;
 $dark-blue: #1e3a8a;
-$white: #ffffff;
-$gray-300: #d1d5db;
-$gray-400: #9ca3af;
-$gray-500: #6b7280;
 
-// Mixins
-@mixin flex-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
+// Mixins (only unique ones, common ones are imported from common.scss)
 @mixin glassmorphism {
   backdrop-filter: blur(12px);
   background: rgba(255, 255, 255, 0.1);
@@ -31,15 +18,6 @@ $gray-500: #6b7280;
 
 @mixin button-gradient($color1: $primary-purple, $color2: $primary-cyan) {
   background: linear-gradient(to right, $color1, $color2);
-}
-
-@mixin transition($property: all, $duration: 0.3s, $timing: ease) {
-  transition: $property $duration $timing;
-}
-
-@mixin focus-ring($color: $primary-purple) {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba($color, 0.1);
 }
 
 // Animations

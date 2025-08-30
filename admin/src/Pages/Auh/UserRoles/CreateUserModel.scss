@@ -1,5 +1,5 @@
 // Import common styles
-@import '../../../styles/common.scss';
+@use '../../../styles/common.scss' as *;
 
 // Modal Overlay
 .modal-overlay {

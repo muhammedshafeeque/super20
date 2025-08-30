@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { X, Save, Plus, Trash2, Check, Square, Edit } from 'lucide-react';
+import { X, Save } from 'lucide-react';
+import PermissionSelector from '../../../Components/PermissionSelector';
 import './CreateUserModel.scss';
-import { getPermissions, createUserRole, updateUserRole } from '../../../Connection/Auth';
+import { createUserRole, updateUserRole } from '../../../Connection/Auth';
 
 interface Role {
   _id: string;
@@ -32,28 +33,9 @@ const CreateUserModel: React.FC<CreateUserModelProps> = ({ isOpen, onClose, mode
     description: ''
   });
   const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [permissions, setPermissions] = useState<any>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchPermissions = async () => {
-      try {
-        setLoading(true);
-        const response = await getPermissions();
-        setPermissions(response);
-      } catch (err) {
-        setError('Failed to fetch permissions');
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    if (isOpen) {
-      fetchPermissions();
-    }
-  }, [isOpen]);
+  const [expandedModules, setExpandedModules] = useState<Set<string>>(new Set(['USER']));
 
   useEffect(() => {
     if (roleData && mode !== 'create') {
@@ -69,25 +51,6 @@ const CreateUserModel: React.FC<CreateUserModelProps> = ({ isOpen, onClose, mode
     }
   }, [roleData, mode]);
 
-  const permissionModules = Object.entries(permissions).map(([moduleName, operations]: [string, any]) => ({
-    module: moduleName,
-    displayName: moduleName.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()),
-    operations: Object.entries(operations).map(([operationKey, permissionValue]: [string, any]) => ({
-      key: operationKey,
-      value: permissionValue,
-      displayName: operationKey.split('_')[1]?.charAt(0).toUpperCase() + operationKey.split('_')[1]?.slice(1) || operationKey,
-      description: `${operationKey.split('_')[1] || operationKey} ${moduleName.replace('_', ' ').toLowerCase()}`
-    }))
-  }));
-
-  const filteredModules = permissionModules.filter(module =>
-    module.displayName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    module.operations.some(op => 
-      op.displayName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      op.description.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  );
-
   const handleInputChange = (field: string, value: string) => {
     if (mode === 'view') return;
     setFormData(prev => ({
@@ -96,56 +59,18 @@ const CreateUserModel: React.FC<CreateUserModelProps> = ({ isOpen, onClose, mode
     }));
   };
 
-  const handlePermissionToggle = (permissionValue: string) => {
+  // Handle module expand/collapse
+  const handleModuleToggle = (moduleName: string) => {
     if (mode === 'view') return;
-    setSelectedPermissions(prev => 
-      prev.includes(permissionValue)
-        ? prev.filter(p => p !== permissionValue)
-        : [...prev, permissionValue]
-    );
-  };
-
-  const handleSelectAllModule = (moduleName: string) => {
-    if (mode === 'view') return;
-    const modulePermissions = permissionModules
-      .find(m => m.module === moduleName)
-      ?.operations.map(op => op.value) || [];
-    
-    const allSelected = modulePermissions.every(p => selectedPermissions.includes(p));
-    
-    if (allSelected) {
-      setSelectedPermissions(prev => prev.filter(p => !modulePermissions.includes(p)));
+    setExpandedModules(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(moduleName)) {
+        newSet.delete(moduleName);
     } else {
-      setSelectedPermissions(prev => [...new Set([...prev, ...modulePermissions])]);
-    }
-  };
-
-  const handleSelectAllOperations = (operationType: string) => {
-    if (mode === 'view') return;
-    const operationPermissions = permissionModules
-      .flatMap(m => m.operations)
-      .filter(op => op.key.includes(operationType))
-      .map(op => op.value);
-    
-    const allSelected = operationPermissions.every(p => selectedPermissions.includes(p));
-    
-    if (allSelected) {
-      setSelectedPermissions(prev => prev.filter(p => !operationPermissions.includes(p)));
-    } else {
-      setSelectedPermissions(prev => [...new Set([...prev, ...operationPermissions])]);
-    }
-  };
-
-  const handleSelectAll = () => {
-    if (mode === 'view') return;
-    const allPermissions = permissionModules.flatMap(m => m.operations.map(op => op.value));
-    const allSelected = allPermissions.every(p => selectedPermissions.includes(p));
-    
-    if (allSelected) {
-      setSelectedPermissions([]);
-    } else {
-      setSelectedPermissions(allPermissions);
-    }
+        newSet.add(moduleName);
+      }
+      return newSet;
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -179,7 +104,6 @@ const CreateUserModel: React.FC<CreateUserModelProps> = ({ isOpen, onClose, mode
       if (mode === 'create') {
         setFormData({ name: '', code: '', description: '' });
         setSelectedPermissions([]);
-        setSearchTerm('');
       }
       onClose();
     } catch (err) {
@@ -193,30 +117,9 @@ const CreateUserModel: React.FC<CreateUserModelProps> = ({ isOpen, onClose, mode
     if (mode === 'create') {
       setFormData({ name: '', code: '', description: '' });
       setSelectedPermissions([]);
-      setSearchTerm('');
     }
     setError(null);
     onClose();
-  };
-
-  const getOperationIcon = (operationType: string) => {
-    switch (operationType) {
-      case 'create': return <Plus size={14} />;
-      case 'read': return <Square size={14} />;
-      case 'update': return <Save size={14} />;
-      case 'delete': return <Trash2 size={14} />;
-      default: return null;
-    }
-  };
-
-  const getOperationColor = (operationType: string) => {
-    switch (operationType) {
-      case 'create': return '#10b981';
-      case 'read': return '#3b82f6';
-      case 'update': return '#f59e0b';
-      case 'delete': return '#ef4444';
-      default: return '#6b7280';
-    }
   };
 
   const getModalTitle = () => {
@@ -313,150 +216,19 @@ const CreateUserModel: React.FC<CreateUserModelProps> = ({ isOpen, onClose, mode
           </div>
 
           <div className="form-section">
-            <div className="permissions-header">
               <h3 className="form-section-title">Permissions Management</h3>
-              {mode !== 'view' && (
-                <div className="permissions-controls">
-                  <div className="permissions-search">
-                    <input
-                      type="text"
-                      className="permissions-search-input"
-                      placeholder="Search permissions..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
+            <PermissionSelector
+              selectedPermissions={selectedPermissions}
+              onPermissionsChange={setSelectedPermissions}
+              mode={mode}
+              loading={loading}
                       disabled={loading}
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    className="select-all-btn"
-                    onClick={handleSelectAll}
-                    disabled={loading}
-                  >
-                    {permissionModules.flatMap(m => m.operations).every(op => 
-                      selectedPermissions.includes(op.value)
-                    ) ? 'Deselect All' : 'Select All'}
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {loading && !permissions || Object.keys(permissions).length === 0 ? (
-              <div className="loading-state">
-                <div className="loading-spinner"></div>
-                <p>Loading permissions...</p>
-              </div>
-            ) : (
-              <>
-                {mode !== 'view' && (
-                  <div className="operation-quick-select">
-                    <h4 className="operation-quick-select-title">Quick Select by Operation</h4>
-                    <div className="operation-buttons">
-                      {['create', 'read', 'update', 'delete'].map(operationType => (
-                        <button
-                          key={operationType}
-                          type="button"
-                          className="operation-btn"
-                          style={{ 
-                            '--operation-color': getOperationColor(operationType) 
-                          } as React.CSSProperties}
-                          onClick={() => handleSelectAllOperations(operationType)}
-                          disabled={loading}
-                        >
-                          {getOperationIcon(operationType)}
-                          <span>{operationType.charAt(0).toUpperCase() + operationType.slice(1)} All</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                <div className="permissions-container">
-                  {filteredModules.map((module) => (
-                    <div key={module.module} className="permission-category">
-                      <div className="permission-category-header">
-                        <h4 className="permission-category-title">{module.displayName}</h4>
-                        {mode !== 'view' && (
-                          <button
-                            type="button"
-                            className="select-all-btn"
-                            onClick={() => handleSelectAllModule(module.module)}
-                            disabled={loading}
-                          >
-                            {module.operations.every(op => selectedPermissions.includes(op.value)) ? 'Deselect All' : 'Select All'}
-                          </button>
-                        )}
-                      </div>
-                      
-                      <div className="permission-list">
-                        {module.operations.map(operation => (
-                          <div key={operation.value} className="permission-item">
-                            <label className={`permission-checkbox ${mode === 'view' ? 'permission-checkbox--readonly' : ''}`}>
-                              <input
-                                type="checkbox"
-                                checked={selectedPermissions.includes(operation.value)}
-                                onChange={() => handlePermissionToggle(operation.value)}
-                                disabled={loading || mode === 'view'}
-                              />
-                              <span className="permission-info">
-                                <div className="permission-header">
-                                  <span 
-                                    className="permission-operation"
-                                    style={{ color: getOperationColor(operation.key.split('_')[1]) }}
-                                  >
-                                    {getOperationIcon(operation.key.split('_')[1])}
-                                    {operation.displayName}
-                                  </span>
-                                </div>
-                                <span className="permission-description">{operation.description}</span>
-                              </span>
-                            </label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {selectedPermissions.length > 0 && (
-                  <div className="selected-permissions">
-                    <h4 className="selected-permissions-title">
-                      Selected Permissions ({selectedPermissions.length})
-                    </h4>
-                    <div className="selected-permissions-list">
-                      {selectedPermissions.map(permissionValue => {
-                        const operation = permissionModules
-                          .flatMap(m => m.operations)
-                          .find(op => op.value === permissionValue);
-                        
-                        return operation ? (
-                          <span 
-                            key={permissionValue} 
-                            className="selected-permission-tag"
-                            style={{ 
-                              '--operation-color': getOperationColor(operation.key.split('_')[1]) 
-                            } as React.CSSProperties}
-                          >
-                            {getOperationIcon(operation.key.split('_')[1])}
-                            {operation.displayName} {operation.key.split('_')[0]}
-                            {mode !== 'view' && (
-                              <button
-                                type="button"
-                                className="remove-permission-btn"
-                                onClick={() => handlePermissionToggle(permissionValue)}
-                                disabled={loading}
-                              >
-                                <X size={12} />
-                              </button>
-                            )}
-                          </span>
-                        ) : null;
-                      })}
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
+              showSearch={true}
+              showQuickSelect={true}
+              showSelectedSummary={true}
+              expandedModules={expandedModules}
+              onModuleToggle={handleModuleToggle}
+            />
           </div>
 
           <div className="modal-actions">

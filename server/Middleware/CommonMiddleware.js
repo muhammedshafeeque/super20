@@ -1,5 +1,5 @@
 import rateLimit from "express-rate-limit";
-import Joi from "joi";
+
 export const errorHandler = (err, req, res, next) => {
     if(err.status){
         return res.status(err.status).json({ message: err.message });

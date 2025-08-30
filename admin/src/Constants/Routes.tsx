@@ -9,4 +9,6 @@ export const ROUTES = {
   CALENDAR: '/calendar',
   SETTINGS: '/settings',
   USER_ROLES: '/user-roles',
+  QUALIFICATIONS: '/qualifications',
+  EMPLOYEES: '/employees',
 }       

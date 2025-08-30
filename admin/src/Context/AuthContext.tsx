@@ -1,8 +1,8 @@
 import { createContext, useContext, useState, useEffect  } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '../Constants/Routes'
-import axios from '../Intercepter/Api'
 import { LOCAL_STORAGE_KEY } from '../Constants/Constants'
+import { getRequestUser } from '../Connection/Auth'
 
 interface AuthContextType {
   user: any | null
@@ -30,15 +30,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.removeItem(LOCAL_STORAGE_KEY.AUTH_TOKEN)
   }
 
-  const getUser = async () => {
-    const response = await axios.get('auth/request-user')
-    return response.data
-  }
+
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        let user = await getUser()
+        let user = await getRequestUser()
         setUser(user.profile) 
         if(user){
           navigate(ROUTES.HOME)

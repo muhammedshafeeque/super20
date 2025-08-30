@@ -1,3 +1,5 @@
+
+
 export const PERMISSIONS = {
     USER:{
         user_create:"user.create",
@@ -28,5 +30,33 @@ export const PERMISSIONS = {
         user_role_read:"user_role.read",
         user_role_update:"user_role.update",
         user_role_delete:"user_role.delete"
-    }
+    },
+    QUALIFICATION_TYPES:{
+        qualification_types_read:"qualification_types.read",
+    },
+    QUALIFICATION:{
+        qualification_create:"qualification.create",
+        qualification_read:"qualification.read",
+        qualification_update:"qualification.update",
+        qualification_delete:"qualification.delete"
+    },
+    INSTITUTION:{
+        institution_create:"institution.create",
+        institution_read:"institution.read",
+        institution_update:"institution.update",
+        institution_delete:"institution.delete"
+    },
+    STUDENT:{
+        student_create:"student.create",
+        student_read:"student.read",
+        student_update:"student.update",
+        student_delete:"student.delete"
+    },
+    EMPLOYEE:{
+        employee_create:"employee.create",
+        employee_read:"employee.read",
+        employee_update:"employee.update",
+        employee_delete:"employee.delete"
+    },
+ 
 }
