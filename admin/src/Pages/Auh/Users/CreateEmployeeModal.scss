@@ -631,6 +631,24 @@
   }
 }
 
+// Error styling
+.error-text {
+  color: #dc2626;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
+
+.form-input--error,
+.form-select--error {
+  border-color: #dc2626 !important;
+  
+  &:focus {
+    border-color: #dc2626 !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
+  }
+}
+
 // Responsive Design
 @media (max-width: 768px) {
   .modal-container {

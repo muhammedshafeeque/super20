@@ -48,31 +48,21 @@ const Employees = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [employeeToDelete, setEmployeeToDelete] = useState<EmployeeProfile | undefined>(undefined);
   const [isDeleting, setIsDeleting] = useState(false);
-  
-  // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('create');
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeProfile | undefined>(undefined);
-  
-  // Permissions modal state
   const [isPermissionsModalOpen, setIsPermissionsModalOpen] = useState(false);
   const [selectedEmployeeForPermissions, setSelectedEmployeeForPermissions] = useState<EmployeeProfile | undefined>(undefined);
-  
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  
-  // Loading state
   const [loading, setLoading] = useState(false);
 
-  // Set header title when component mounts
   useEffect(() => {
     setTitle('Employees');
   }, [setTitle]);
 
-  // Fetch employees with pagination and filters
   const fetchEmployees = async () => {
     try {
       setLoading(true);
@@ -158,27 +148,45 @@ const Employees = () => {
     educationalQualifications: any[];
   }) => {
     try {
+      let body = {
+        name: employeeData.name,
+        email: employeeData.email,
+        phone: employeeData.phone,
+        address: employeeData.address,
+        dateOfBirth: employeeData.dateOfBirth,
+        dateOfJoining: employeeData.dateOfJoining,
+        userRole: employeeData.userRole,
+        gender: employeeData.gender,
+        educationalQualifications: [] as any
+      }
+      for (const qualification of employeeData.educationalQualifications) {
+        body.educationalQualifications.push({
+          qualification: qualification.qualification._id,
+          institution: qualification.institution,
+          yearOfPassing: qualification.yearOfPassing,
+          percentage: qualification.percentage,
+        });
+      }
       if (modalMode === 'create') {
-        await createEmployee(employeeData);
+        await createEmployee(body);
       } else if (modalMode === 'edit' && selectedEmployee) {
-        await updateEmployee(selectedEmployee._id, employeeData);
+        await updateEmployee(selectedEmployee._id,body);
       }
       
-      // Refetch employees after successful operation
       fetchEmployees();
     } catch (error) {
       console.error('Error saving employee:', error);
+      throw error;
     }
   };
 
   const handlePermissionsSubmit = async (employeeId: string, permissions: string[]) => {
     try {
       await updateEmployeePermissions(employeeId, permissions);
-      // Refetch employees after successful operation
       fetchEmployees();
     } catch (error) {
       console.error('Error updating permissions:', error);
-      throw error; // Re-throw to let the modal handle the error
+      throw error;
     }
   };
 
@@ -217,12 +225,12 @@ const Employees = () => {
 
   const handleItemsPerPageChange = (newItemsPerPage: number) => {
     setItemsPerPage(newItemsPerPage);
-    setCurrentPage(1); // Reset to first page when changing items per page
+    setCurrentPage(1);
   };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    setCurrentPage(1); // Reset to first page when searching
+    setCurrentPage(1);
   };
 
   const handleClearSearch = () => {
@@ -230,10 +238,8 @@ const Employees = () => {
     setCurrentPage(1);
   };
 
-  // Use employees directly since filtering is done on the server
   const filteredEmployees = employees;
 
-  // Fetch employees when component mounts or when pagination/search changes
   useEffect(() => {
     fetchEmployees();
   }, [currentPage, itemsPerPage, searchTerm]);

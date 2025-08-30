@@ -31,15 +31,19 @@ export const requestLimiter = rateLimit({
 export const validateSchema = (schema) => {
     
     return (req, res, next) => {
-        // Debug: Check if body is being parsed
         if (!req.body || Object.keys(req.body).length === 0) {
             return res.status(400).json({ 
                 message: "Request body is empty or not properly formatted. Please ensure Content-Type is application/json and body is valid JSON." 
             });
         }
+        let validationResult;
+        if (schema.body) {
+            validationResult = schema.body.validate(req.body);
+        } else {
+            validationResult = schema.validate({ body: req.body });
+        }
         
-        // Validate only the body part of the schema
-        const { error } = schema.validate({ body: req.body });
+        const { error } = validationResult;
         if (error) {
             return res.status(400).json({ message: error.message });
         }

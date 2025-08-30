@@ -23,7 +23,7 @@ const EditPermissionsModal: React.FC<EditPermissionsModalProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [expandedModules, setExpandedModules] = useState<Set<string>>(new Set(['USER']));
 
-  // Initialize selected permissions
+
   useEffect(() => {
     if (employeeData && mode !== 'create') {
       const userPermissions = employeeData.user?.permissions || [];
@@ -36,7 +36,7 @@ const EditPermissionsModal: React.FC<EditPermissionsModalProps> = ({
     }
   }, [employeeData, mode]);
 
-  // Handle module expand/collapse
+  
   const handleModuleToggle = (moduleName: string) => {
     if (mode === 'view') return;
     setExpandedModules(prev => {
@@ -50,14 +50,14 @@ const EditPermissionsModal: React.FC<EditPermissionsModalProps> = ({
     });
   };
 
-  // Handle submit
+  
   const handleSubmit = async () => {
     if (mode === 'view') return;
     try {
       setLoading(true);
       setError(null);
       if (employeeData?._id) {
-        await onSubmit(employeeData._id, selectedPermissions);
+        await onSubmit(employeeData.user._id, selectedPermissions);
         onClose();
       }
     } catch (error) {
@@ -68,7 +68,7 @@ const EditPermissionsModal: React.FC<EditPermissionsModalProps> = ({
     }
   };
 
-  // Handle close
+  
   const handleClose = () => {
     if (mode === 'create') {
       setSelectedPermissions([]);
@@ -77,25 +77,6 @@ const EditPermissionsModal: React.FC<EditPermissionsModalProps> = ({
     onClose();
   };
 
-  // Get modal title
-  const getModalTitle = () => {
-    switch (mode) {
-      case 'create': return 'Create Permissions';
-      case 'edit': return 'Edit Permissions';
-      case 'view': return 'View Permissions';
-      default: return 'Permissions';
-    }
-  };
-
-  // Get submit button text
-  const getSubmitButtonText = () => {
-    switch (mode) {
-      case 'create': return 'Create Permissions';
-      case 'edit': return 'Update Permissions';
-      case 'view': return 'Close';
-      default: return 'Submit';
-    }
-  };
 
   if (!isOpen) return null;
 
