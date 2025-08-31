@@ -1,0 +1,255 @@
+.select-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.select-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  .required {
+    color: #ef4444;
+    font-weight: 600;
+  }
+}
+
+.select {
+  position: relative;
+  width: 100%;
+
+  &--small {
+    .select-trigger {
+      padding: 6px 12px;
+      font-size: 12px;
+      min-height: 32px;
+    }
+  }
+
+  &--medium {
+    .select-trigger {
+      padding: 8px 12px;
+      font-size: 14px;
+      min-height: 36px;
+    }
+  }
+
+  &--large {
+    .select-trigger {
+      padding: 12px 16px;
+      font-size: 16px;
+      min-height: 44px;
+    }
+  }
+
+  &--error {
+    .select-trigger {
+      border-color: #ef4444;
+
+      &:focus {
+        border-color: #ef4444;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+      }
+    }
+  }
+
+  &--readonly {
+    .select-trigger {
+      background-color: #f9fafb;
+      color: #6b7280;
+      cursor: default;
+    }
+  }
+
+  &--open {
+    .select-arrow {
+      transform: rotate(180deg);
+    }
+  }
+}
+
+.select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background-color: white;
+  color: #111827;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  outline: none;
+
+  &:hover:not(:disabled) {
+    border-color: #9ca3af;
+  }
+
+  &:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+
+  &:disabled {
+    background-color: #f9fafb;
+    color: #6b7280;
+    cursor: not-allowed;
+  }
+}
+
+.select-value {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.select-placeholder {
+  color: #9ca3af;
+}
+
+.select-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+}
+
+.select-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: none;
+  color: #6b7280;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #f3f4f6;
+    color: #374151;
+  }
+}
+
+.select-arrow {
+  color: #6b7280;
+  transition: transform 0.2s ease;
+}
+
+.select-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  margin-top: 4px;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  max-height: 300px;
+  overflow: hidden;
+}
+
+.select-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+
+  svg {
+    color: #6b7280;
+    flex-shrink: 0;
+  }
+}
+
+.select-search-input {
+  flex: 1;
+  border: none;
+  background: none;
+  outline: none;
+  font-size: 14px;
+  color: #111827;
+
+  &::placeholder {
+    color: #9ca3af;
+  }
+}
+
+.select-options {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.select-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 14px;
+  color: #111827;
+
+  &:hover:not(.select-option--disabled) {
+    background-color: #f3f4f6;
+  }
+
+  &--selected {
+    background-color: #dbeafe;
+    color: #1e40af;
+  }
+
+  &--disabled {
+    color: #9ca3af;
+    cursor: not-allowed;
+  }
+
+  &--focused {
+    background-color: #f3f4f6;
+  }
+}
+
+.select-checkbox {
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.select-option-label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.select-no-options {
+  padding: 12px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.select-error {
+  color: #ef4444;
+  font-size: 12px;
+  margin-top: 2px;
+  display: block;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .select-trigger {
+    font-size: 16px; // Prevent zoom on iOS
+  }
+}

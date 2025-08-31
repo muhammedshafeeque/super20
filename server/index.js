@@ -7,6 +7,10 @@ import router from "./Routes/index.js";
 import { errorHandler, notFound, requestLimiter } from "./Middleware/CommonMiddleware.js";
 import { ORIGINS } from "./Constants/Constants.js";
 
+// Import models to register them
+import "./Models/UserSchema.js";
+import "./Models/qualificationSchema.js";
+
 dotenv.config();
 const app = express();
 

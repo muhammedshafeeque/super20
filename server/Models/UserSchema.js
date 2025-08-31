@@ -23,9 +23,11 @@ const profileSchema = new mongoose.Schema({
     isDeleted: { type: Boolean, default: false },
     isBlocked: { type: Boolean, default: false },
     isSuspended: { type: Boolean, default: false },
+    phone: { type: String, required: true },
+    address: { type: String, required: true },
     educationalQualifications:[
         {
-            qualification: { type: String, required: true },
+            qualification: { type: mongoose.Schema.Types.ObjectId, ref: COLLECTIONS.QUALIFICATION, required: true },
             institution: { type: String, required: true },
             yearOfPassing: { type: Number, required: true },
             percentage: { type: Number, required: true },

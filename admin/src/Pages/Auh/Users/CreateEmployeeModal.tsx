@@ -106,6 +106,12 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({
     }
   });
 
+  // Debug form state
+  const formValues = watch();
+  console.log('Form values:', formValues);
+  console.log('Form errors:', errors);
+  console.log('Form isValid:', isValid);
+
   // Use field array for educational qualifications
   const { fields, append, remove } = useFieldArray({
     control,
@@ -126,7 +132,7 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({
       const formatQualifications = () => {
         if (employeeData.educationalQualifications && employeeData.educationalQualifications.length > 0) {
           return employeeData.educationalQualifications.map((qual: any) => ({
-            qualification: qual.qualification || '',
+            qualification: qual.qualification?._id ? qual.qualification : qual.qualification || '',
             institution: qual.institution || '',
             yearOfPassing: qual.yearOfPassing || new Date().getFullYear(),
             percentage: qual.percentage || 0
@@ -142,7 +148,7 @@ const CreateEmployeeModal: React.FC<CreateEmployeeModalProps> = ({
         address: employeeData.address || employeeData.profile?.address || '',
         dateOfBirth: formatDateForInput(employeeData.dateOfBirth || employeeData.profile?.dateOfBirth),
         dateOfJoining: formatDateForInput(employeeData.dateOfJoining || employeeData.profile?.dateOfJoining),
-        userRole: employeeData.userRole || employeeData.profile?.userRole || '',
+        userRole: employeeData.userRole?._id || employeeData.userRole || employeeData.profile?.userRole?._id || employeeData.profile?.userRole || '',
         gender: employeeData.gender || employeeData.profile?.gender || '',
         educationalQualifications: formatQualifications()
       });

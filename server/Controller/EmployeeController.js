@@ -36,6 +36,12 @@ export const createEmployee = async (req, res, next) => {
         const calculateAge = (dateOfBirth) => {
             const today = new Date();
             const birthDate = new Date(dateOfBirth);
+            
+            // Check if birth date is in the future
+            if (birthDate > today) {
+                return null; // Return null for future dates
+            }
+            
             let age = today.getFullYear() - birthDate.getFullYear();
             const monthDiff = today.getMonth() - birthDate.getMonth();
             
@@ -56,6 +62,8 @@ export const createEmployee = async (req, res, next) => {
             dateOfJoining: req.body.dateOfJoining,
             userRole: userRole._id,
             educationalQualifications: req.body.educationalQualifications || [],
+            phone: req.body.phone,
+            address: req.body.address,
         });
   
         res.status(200).json({ profile, message: "Employee created successfully" });
@@ -86,6 +94,25 @@ export const getEmployees = async (req, res, next) => {
             .skip(skip);
         let count = await Profile.countDocuments(query);
 
+        // Age calculation function
+        const calculateAge = (dateOfBirth) => {
+            const today = new Date();
+            const birthDate = new Date(dateOfBirth);
+            
+            // Check if birth date is in the future
+            if (birthDate > today) {
+                return null; // Return null for future dates
+            }
+            
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+        };
+
         let result=await Promise.all(employees.map(async employee=>{
             const employeeObj = employee.toObject();
             return {
@@ -101,7 +128,8 @@ export const getEmployees = async (req, res, next) => {
                 userRolePermissions: employeeObj.userRole.permissions,
                 userPermissions: employeeObj.user.permissions,
                 userPermissionCount: employeeObj.user.permissions.length,
-                userRolePermissionCount: employeeObj.userRole.permissions.length
+                userRolePermissionCount: employeeObj.userRole.permissions.length,
+                age: calculateAge(employeeObj.dateOfBirth)
             }
         }))
         res.status(200).json({result:result,count:count});
@@ -117,14 +145,39 @@ export const getEmployeeById = async (req, res, next) => {
             .populate("userRole")
             .populate({
                 path: "educationalQualifications.qualification",
-                model: "qualifications"
+                model: COLLECTIONS.QUALIFICATION
             });
         
         if (!employee) {
             return res.status(404).json({ message: "Employee not found" });
         }
+
+        // Calculate age
+        const calculateAge = (dateOfBirth) => {
+            const today = new Date();
+            const birthDate = new Date(dateOfBirth);
+            
+            // Check if birth date is in the future
+            if (birthDate > today) {
+                return null; // Return null for future dates
+            }
+            
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+        };
+
+        const employeeObj = employee.toObject();
+        const employeeWithAge = {
+            ...employeeObj,
+            age: calculateAge(employeeObj.dateOfBirth)
+        };
         
-        res.status(200).json({ employee, message: "Employee fetched successfully" });
+        res.status(200).json({ employee: employeeWithAge, message: "Employee fetched successfully" });
     } catch (error) {
         next(error);
     }
@@ -140,6 +193,12 @@ export const updateEmployee = async (req, res, next) => {
             const calculateAge = (dateOfBirth) => {
                 const today = new Date();
                 const birthDate = new Date(dateOfBirth);
+                
+                // Check if birth date is in the future
+                if (birthDate > today) {
+                    return null; // Return null for future dates
+                }
+                
                 let age = today.getFullYear() - birthDate.getFullYear();
                 const monthDiff = today.getMonth() - birthDate.getMonth();
                 
@@ -156,14 +215,39 @@ export const updateEmployee = async (req, res, next) => {
             .populate("userRole")
             .populate({
                 path: "educationalQualifications.qualification",
-                model: "qualifications"
+                model: COLLECTIONS.QUALIFICATION
             });
         
         if (!employee) {
             return res.status(404).json({ message: "Employee not found" });
         }
+
+        // Calculate age for response
+        const calculateAge = (dateOfBirth) => {
+            const today = new Date();
+            const birthDate = new Date(dateOfBirth);
+            
+            // Check if birth date is in the future
+            if (birthDate > today) {
+                return null; // Return null for future dates
+            }
+            
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+        };
+
+        const employeeObj = employee.toObject();
+        const employeeWithAge = {
+            ...employeeObj,
+            age: calculateAge(employeeObj.dateOfBirth)
+        };
         
-        res.status(200).json({ employee, message: "Employee updated successfully" });
+        res.status(200).json({ employee: employeeWithAge, message: "Employee updated successfully" });
     } catch (error) {
         next(error);
     }
